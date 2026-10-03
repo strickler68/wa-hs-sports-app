@@ -1,0 +1,73 @@
+school_name,address,league,division,classification,district,city,county,nces_id,verify_needed
+Bellevue High School,,KingCo,3A,3A,Bellevue School District,Bellevue,King,530039000060,FALSE
+Bothell High School,,KingCo,4A,4A,Northshore School District,Bothell,King,530591000876,FALSE
+Eastlake High School,,KingCo,4A,4A,Lake Washington School District,Sammamish,King,530423001141,FALSE
+Hazen High School,,KingCo,4A,4A,Renton School District,Renton,King,530723001080,FALSE
+Inglemoor High School,,KingCo,3A,3A,Northshore School District,Kenmore,King,530591000884,FALSE
+Issaquah High School,,KingCo,4A,4A,Issaquah School District,Issaquah,King,530375000574,FALSE
+Interlake High School,,KingCo,3A,3A,Bellevue School District,Bellevue,King,530039000072,FALSE
+Juanita High School,,KingCo,4A,4A,Lake Washington School District,Kirkland,King,530423000670,FALSE
+Lake Washington High School,,KingCo,4A,4A,Lake Washington School District,Kirkland,King,530423000674,FALSE
+Liberty High School,,KingCo,3A,3A,Issaquah School District,Renton,King,530375000576,FALSE
+Mercer Island High School,,KingCo,3A,3A,Mercer Island School District,Mercer Island,King,530498000761,FALSE
+Mount Si High School,,KingCo,4A,4A,Snoqualmie Valley School District,Snoqualmie,King,,FALSE
+Newport High School,,KingCo,4A,4A,Bellevue School District,Bellevue,King,530039000078,FALSE
+North Creek High School,,KingCo,4A,4A,Northshore School District,Bothell,King,,FALSE
+Redmond High School,,KingCo,4A,4A,Lake Washington School District,Redmond,King,530423000679,FALSE
+Sammamish High School,,KingCo,3A,3A,Bellevue School District,Bellevue,King,,FALSE
+Skyline High School,,KingCo,4A,4A,Issaquah School District,Sammamish,King,,FALSE
+Woodinville High School,,KingCo,4A,4A,Northshore School District,Woodinville,King,,FALSE
+Evergreen High School,,KingCo,2A,2A,Highline School District,Seattle,King,530354000526,FALSE
+Highline High School,,KingCo,3A,3A,Highline School District,Burien,King,530354000531,FALSE
+Foster High School,,KingCo,2A,2A,Tukwila School District,Tukwila,King,530813001341,FALSE
+Cedarcrest High School,,KingCo,2A,2A,Riverview School District,Duvall,King,530456000716,FALSE
+Lindbergh High School,,KingCo,2A,2A,Renton School District,Renton,King,530723001077,FALSE
+Renton High School,,KingCo,2A,2A,Renton School District,Renton,King,530723001082,FALSE
+Tyee High School,,KingCo,1A,1A,Highline School District,SeaTac,King,,FALSE
+Auburn High School,,NPSL,4A,4A,Auburn School District,Auburn,King,530030000032,FALSE
+Auburn Mountainview High School,,NPSL,3A,3A,Auburn School District,Auburn,King,530030002978,FALSE
+Auburn Riverside High School,,NPSL,4A,4A,Auburn School District,Auburn,King,530030002445,FALSE
+Decatur High School,,NPSL,3A,3A,Federal Way School District,Federal Way,King,530282000434,FALSE
+Federal Way High School,,NPSL,3A,3A,Federal Way School District,Federal Way,King,530282000435,FALSE
+Thomas Jefferson High School,,NPSL,3A,3A,Federal Way School District,Auburn,King,530282000451,FALSE
+Todd Beamer High School,,NPSL,3A,3A,Federal Way School District,Federal Way,King,530282003154,FALSE
+Kent-Meridian High School,,NPSL,3A,3A,Kent School District,Kent,King,530396000621,FALSE
+Kentlake High School,,NPSL,3A,3A,Kent School District,Kent,King,530396002570,FALSE
+Kentridge High School,,NPSL,4A,4A,Kent School District,Kent,King,,FALSE
+Kentwood High School,,NPSL,4A,4A,Kent School District,Covington,King,,FALSE
+Tahoma High School,,NPSL,4A,4A,Tahoma School District,Kent,King,,FALSE
+Mount Rainier High School,,NPSL,4A,4A,Highline School District,Des Moines,King,530354000538,FALSE
+Kennedy Catholic High School,,NPSL,4A,4A,Private (Archdiocese of Seattle),Burien,King,,FALSE
+Stadium High School,,NPSL,4A,4A,Tacoma School District,Tacoma,Pierce,,FALSE
+Enumclaw High School,,NPSL,3A,3A,Enumclaw School District,Enumclaw,King,,FALSE
+White River High School,,NPSL,3A,3A,White River School District,Buckley,Pierce,,FALSE
+Puyallup High School,,SPSL,,4A,Puyallup School District,Puyallup,Pierce,530696001038,FALSE
+Emerald Ridge High School,,SPSL,,4A,Puyallup School District,Puyallup,Pierce,530696002809,FALSE
+Rogers High School (Puyallup),,SPSL,,4A,Puyallup School District,Puyallup,Pierce,530696001028,FALSE
+Spanaway Lake High School,,SPSL,,4A,Bethel School District,Spanaway,Pierce,,FALSE
+Bethel High School,,SPSL,,4A,Bethel School District,Spanaway,Pierce,530048000119,FALSE
+Curtis High School,,SPSL,,4A,University Place School District,University Place,Pierce,530918001549,FALSE
+Graham-Kapowsin High School,,SPSL,,4A,Bethel School District,Graham,Pierce,530048003003,FALSE
+Sumner High School,,SPSL,,4A,Sumner-Bonney Lake School District,Sumner,Pierce,530861001446,FALSE
+Bonney Lake High School,,SPSL,,4A,Sumner-Bonney Lake School District,Bonney Lake,Pierce,530861002998,FALSE
+Olympia High School,,SPSL,,4A,Olympia School District,Olympia,Thurston,530618000937,FALSE
+South Kitsap High School,,SPSL,,4A,South Kitsap School District,Port Orchard,Kitsap,530816001357,FALSE
+Yelm High School,,SPSL,,4A,Yelm School District,Yelm,Thurston,531014001716,FALSE
+Lincoln High School (Seattle),,Metro,4A,4A,Seattle School District #1,Seattle,King,,FALSE
+Ballard High School,,Metro,3A,3A,Seattle School District #1,Seattle,King,530771001138,FALSE
+Bishop Blanchet High School,,Metro,3A,3A,Private (Archdiocese of Seattle),Seattle,King,,FALSE
+Eastside Catholic High School,,Metro,3A,3A,Private (Archdiocese of Seattle),Sammamish,King,,FALSE
+Franklin High School (Seattle),,Metro,3A,3A,Seattle School District #1,Seattle,King,,FALSE
+Garfield High School,,Metro,3A,3A,Seattle School District #1,Seattle,King,,FALSE
+Holy Names Academy,,Metro,3A,3A,Private (Girls' Catholic),Seattle,King,,FALSE
+Ingraham High School,,Metro,3A,3A,Seattle School District #1,Seattle,King,530771001187,FALSE
+Lakeside School,,Metro,3A,3A,Private,Seattle,King,02164679,FALSE
+O'Dea High School,,Metro,3A,3A,Private (Christian Brothers),Seattle,King,,FALSE
+Rainier Beach High School,,Metro,3A,3A,Seattle School District #1,Seattle,King,,FALSE
+Roosevelt High School (Seattle),,Metro,3A,3A,Seattle School District #1,Seattle,King,530771001239,FALSE
+Seattle Academy,1201 E Union St,Metro,3A,3A,Private,Seattle,King,,FALSE
+Seattle Preparatory School,,Metro,3A,3A,Private (Jesuit),Seattle,King,,FALSE
+West Seattle High School,,Metro,3A,3A,Seattle School District #1,Seattle,King,,FALSE
+Chief Sealth International High School,,Metro,2A,2A,Seattle School District #1,Seattle,King,530771001149,FALSE
+Cleveland High School,,Metro,2A,2A,Seattle School District #1,Seattle,King,530771001150,FALSE
+Nathan Hale High School,,Metro,2A,2A,Seattle School District #1,Seattle,King,530771001222,FALSE

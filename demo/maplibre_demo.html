@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WA HS Sports Tracker — MapLibre demo (run locally)</title>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; }
+  #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+  #banner {
+    position: absolute; top: 10px; left: 10px; z-index: 1;
+    background: white; padding: 10px 14px; border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.25); font-size: 13px; max-width: 320px;
+  }
+  #banner b { font-size: 14px; }
+  .maplibregl-popup-content { font-size: 13px; padding: 10px 12px; }
+  .maplibregl-popup-content b { font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="banner">
+  <b>WA HS Sports Tracker — real MapLibre + basemap</b><br>
+  This file runs a genuine tiled basemap and WebGL vector rendering.
+  It won't work published as a claude.ai artifact (sandbox network
+  restrictions) — open this HTML file directly in a browser instead.
+  Uses MapLibre's free public demo style; swap in Protomaps or your
+  own Martin/pg_tileserv endpoint for production. 72 schools plotted
+  from the project's real seed data.
+</div>
+<div id="map"></div>
+<script>
+const SCHOOLS = {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.201,47.61]},"properties":{"name":"Bellevue High School","league":"KingCo","division":"3A","city":"Bellevue"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.205,47.76]},"properties":{"name":"Bothell High School","league":"KingCo","division":"4A","city":"Bothell"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.036,47.616]},"properties":{"name":"Eastlake High School","league":"KingCo","division":"4A","city":"Sammamish"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.192,47.462]},"properties":{"name":"Hazen High School","league":"KingCo","division":"4A","city":"Renton"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.244,47.757]},"properties":{"name":"Inglemoor High School","league":"KingCo","division":"3A","city":"Kenmore"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.033,47.53]},"properties":{"name":"Issaquah High School","league":"KingCo","division":"4A","city":"Issaquah"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.185,47.605]},"properties":{"name":"Interlake High School","league":"KingCo","division":"3A","city":"Bellevue"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.22,47.7]},"properties":{"name":"Juanita High School","league":"KingCo","division":"4A","city":"Kirkland"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.209,47.677]},"properties":{"name":"Lake Washington High School","league":"KingCo","division":"4A","city":"Kirkland"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.13,47.483]},"properties":{"name":"Liberty High School","league":"KingCo","division":"3A","city":"Renton"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.222,47.57]},"properties":{"name":"Mercer Island High School","league":"KingCo","division":"3A","city":"Mercer Island"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-121.883,47.523]},"properties":{"name":"Mount Si High School","league":"KingCo","division":"4A","city":"Snoqualmie"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.17,47.59]},"properties":{"name":"Newport High School","league":"KingCo","division":"4A","city":"Bellevue"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.196,47.771]},"properties":{"name":"North Creek High School","league":"KingCo","division":"4A","city":"Bothell"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.121,47.674]},"properties":{"name":"Redmond High School","league":"KingCo","division":"4A","city":"Redmond"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.18,47.62]},"properties":{"name":"Sammamish High School","league":"KingCo","division":"3A","city":"Bellevue"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.036,47.616]},"properties":{"name":"Skyline High School","league":"KingCo","division":"4A","city":"Sammamish"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.163,47.754]},"properties":{"name":"Woodinville High School","league":"KingCo","division":"4A","city":"Woodinville"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.318,47.475]},"properties":{"name":"Evergreen High School","league":"KingCo","division":"2A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.331,47.478]},"properties":{"name":"Highline High School","league":"KingCo","division":"3A","city":"Burien"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.284,47.474]},"properties":{"name":"Foster High School","league":"KingCo","division":"2A","city":"Tukwila"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-121.978,47.726]},"properties":{"name":"Cedarcrest High School","league":"KingCo","division":"2A","city":"Duvall"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.187,47.5]},"properties":{"name":"Lindbergh High School","league":"KingCo","division":"2A","city":"Renton"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.207,47.483]},"properties":{"name":"Renton High School","league":"KingCo","division":"2A","city":"Renton"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.29,47.47]},"properties":{"name":"Tyee High School","league":"KingCo","division":"1A","city":"SeaTac"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.23,47.307]},"properties":{"name":"Auburn High School","league":"NPSL","division":"4A","city":"Auburn"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.184,47.294]},"properties":{"name":"Auburn Mountainview High School","league":"NPSL","division":"3A","city":"Auburn"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.204,47.284]},"properties":{"name":"Auburn Riverside High School","league":"NPSL","division":"4A","city":"Auburn"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.312,47.322]},"properties":{"name":"Decatur High School","league":"NPSL","division":"3A","city":"Federal Way"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.312,47.322]},"properties":{"name":"Federal Way High School","league":"NPSL","division":"3A","city":"Federal Way"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.245,47.313]},"properties":{"name":"Thomas Jefferson High School","league":"NPSL","division":"3A","city":"Auburn"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.317,47.336]},"properties":{"name":"Todd Beamer High School","league":"NPSL","division":"3A","city":"Federal Way"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.235,47.381]},"properties":{"name":"Kent-Meridian High School","league":"NPSL","division":"3A","city":"Kent"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.104,47.352]},"properties":{"name":"Kentlake High School","league":"NPSL","division":"3A","city":"Kent"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.212,47.381]},"properties":{"name":"Kentridge High School","league":"NPSL","division":"4A","city":"Kent"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.15,47.361]},"properties":{"name":"Kentwood High School","league":"NPSL","division":"4A","city":"Covington"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.031,47.361]},"properties":{"name":"Tahoma High School","league":"NPSL","division":"4A","city":"Kent"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.314,47.402]},"properties":{"name":"Mount Rainier High School","league":"NPSL","division":"4A","city":"Des Moines"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.346,47.469]},"properties":{"name":"Kennedy Catholic High School","league":"NPSL","division":"4A","city":"Burien"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.449,47.264]},"properties":{"name":"Stadium High School","league":"NPSL","division":"4A","city":"Tacoma"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-121.991,47.205]},"properties":{"name":"Enumclaw High School","league":"NPSL","division":"3A","city":"Enumclaw"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.033,47.167]},"properties":{"name":"White River High School","league":"NPSL","division":"3A","city":"Buckley"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.293,47.185]},"properties":{"name":"Puyallup High School","league":"SPSL","division":"4A","city":"Puyallup"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.322,47.145]},"properties":{"name":"Emerald Ridge High School","league":"SPSL","division":"4A","city":"Puyallup"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.32,47.18]},"properties":{"name":"Rogers High School (Puyallup)","league":"SPSL","division":"4A","city":"Puyallup"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.435,47.104]},"properties":{"name":"Spanaway Lake High School","league":"SPSL","division":"4A","city":"Spanaway"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.348,47.083]},"properties":{"name":"Bethel High School","league":"SPSL","division":"4A","city":"Spanaway"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.552,47.219]},"properties":{"name":"Curtis High School","league":"SPSL","division":"4A","city":"University Place"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.295,46.988]},"properties":{"name":"Graham-Kapowsin High School","league":"SPSL","division":"4A","city":"Graham"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.235,47.202]},"properties":{"name":"Sumner High School","league":"SPSL","division":"4A","city":"Sumner"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.188,47.177]},"properties":{"name":"Bonney Lake High School","league":"SPSL","division":"4A","city":"Bonney Lake"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.896,47.043]},"properties":{"name":"Olympia High School","league":"SPSL","division":"4A","city":"Olympia"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.635,47.54]},"properties":{"name":"South Kitsap High School","league":"SPSL","division":"4A","city":"Port Orchard"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.605,46.942]},"properties":{"name":"Yelm High School","league":"SPSL","division":"4A","city":"Yelm"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.334,47.661]},"properties":{"name":"Lincoln High School (Seattle)","league":"Metro","division":"4A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.384,47.668]},"properties":{"name":"Ballard High School","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.348,47.716]},"properties":{"name":"Bishop Blanchet High School","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.038,47.615]},"properties":{"name":"Eastside Catholic High School","league":"Metro","division":"3A","city":"Sammamish"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.287,47.573]},"properties":{"name":"Franklin High School (Seattle)","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.302,47.618]},"properties":{"name":"Garfield High School","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.315,47.625]},"properties":{"name":"Holy Names Academy","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.334,47.715]},"properties":{"name":"Ingraham High School","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.293,47.703]},"properties":{"name":"Lakeside School","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.32,47.614]},"properties":{"name":"O'Dea High School","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.267,47.515]},"properties":{"name":"Rainier Beach High School","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.316,47.673]},"properties":{"name":"Roosevelt High School (Seattle)","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.318,47.612]},"properties":{"name":"Seattle Academy","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.318,47.633]},"properties":{"name":"Seattle Preparatory School","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.386,47.56]},"properties":{"name":"West Seattle High School","league":"Metro","division":"3A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.376,47.522]},"properties":{"name":"Chief Sealth International High School","league":"Metro","division":"2A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.298,47.556]},"properties":{"name":"Cleveland High School","league":"Metro","division":"2A","city":"Seattle"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.29,47.708]},"properties":{"name":"Nathan Hale High School","league":"Metro","division":"2A","city":"Seattle"}}]};
+
+const LEAGUE_COLOR = { KingCo: "#1F7A4C", NPSL: "#6B3FA0", SPSL: "#1E3A5F", Metro: "#C4344F" };
+
+const map = new maplibregl.Map({
+  container: 'map',
+  style: 'https://demotiles.maplibre.org/style.json',
+  center: [-122.35, 47.35],
+  zoom: 8
+});
+
+map.addControl(new maplibregl.NavigationControl());
+
+map.on('load', () => {
+  map.addSource('schools', { type: 'geojson', data: SCHOOLS });
+
+  map.addLayer({
+    id: 'schools-circles',
+    type: 'circle',
+    source: 'schools',
+    paint: {
+      'circle-radius': 6,
+      'circle-color': [
+        'match', ['get', 'league'],
+        'KingCo', LEAGUE_COLOR.KingCo,
+        'NPSL', LEAGUE_COLOR.NPSL,
+        'SPSL', LEAGUE_COLOR.SPSL,
+        'Metro', LEAGUE_COLOR.Metro,
+        '#888888'
+      ],
+      'circle-stroke-width': 1.5,
+      'circle-stroke-color': '#ffffff'
+    }
+  });
+
+  const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false });
+
+  map.on('mouseenter', 'schools-circles', (e) => {
+    map.getCanvas().style.cursor = 'pointer';
+    const f = e.features[0];
+    const p = f.properties;
+    popup.setLngLat(f.geometry.coordinates)
+      .setHTML(`<b>${p.name}</b><br>${p.league}${p.division ? ' &middot; ' + p.division : ''}<br>${p.city}`)
+      .addTo(map);
+  });
+
+  map.on('mouseleave', 'schools-circles', () => {
+    map.getCanvas().style.cursor = '';
+    popup.remove();
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KingCo · NPSL · SPSL · Metro Sports Tracker — Desktop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F2EFE6;
+  --panel: #FFFFFF;
+  --ink: #16302A;
+  --ink-soft: #4A5C54;
+  --turf: #3C7A5C;
+  --turf-dark: #285940;
+  --amber: #D9A441;
+  --amber-dark: #8A6A28;
+  --line: rgba(22,48,42,0.14);
+  --kingco: #1F7A4C;
+  --npsl: #6B3FA0;
+  --spsl: #1E3A5F;
+  --metro: #C4344F;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+:root:not([data-theme="light"]) {
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14201B;
+    --panel: #1B2A24;
+    --ink: #F2EFE6;
+    --ink-soft: #B9C4BE;
+    --line: rgba(242,239,230,0.14);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14201B;
+  --panel: #1B2A24;
+  --ink: #F2EFE6;
+  --ink-soft: #B9C4BE;
+  --line: rgba(242,239,230,0.14);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Karla', sans-serif;
+  min-height: 100%;
+}
+.app-shell {
+  display: flex;
+  max-width: 1280px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--line);
+  padding: 1.5rem 1rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.sidebar h1 {
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 0.4rem;
+}
+.sidebar p {
+  color: var(--ink-soft);
+  font-size: 12px;
+  margin: 0 0 1.5rem;
+  line-height: 1.4;
+}
+.main-content {
+  flex: 1;
+  min-width: 0;
+  padding: 1.5rem 2rem 3rem;
+}
+body {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+h1, h2, h3 { font-family: 'Oswald', sans-serif; margin: 0; letter-spacing: 0.01em; }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.header h1 {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.header p {
+  margin: 0.25rem 0 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  max-width: 46ch;
+}
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tab-btn {
+  display: flex;
+  align-items: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  color: var(--ink-soft);
+  padding: 0.55rem 0.7rem;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 0 6px 6px 0;
+}
+.tab-btn:hover { background: var(--bg); }
+.tab-btn.active {
+  color: var(--turf-dark);
+  border-left-color: var(--amber);
+  background: var(--bg);
+  font-weight: 600;
+}
+@media (prefers-color-scheme: dark) {
+  .tab-btn.active { color: var(--amber); }
+}
+:root[data-theme="dark"] .tab-btn.active { color: var(--amber); }
+.view { display: none; }
+.view.active { display: block; }
+
+.notice {
+  background: rgba(217,164,65,0.14);
+  border: 1px solid rgba(217,164,65,0.4);
+  border-radius: 6px;
+  padding: 0.6rem 0.85rem;
+  font-size: 13px;
+  color: var(--amber-dark);
+  margin-bottom: 1rem;
+}
+@media (prefers-color-scheme: dark) { .notice { color: var(--amber); } }
+:root[data-theme="dark"] .notice { color: var(--amber); }
+
+.legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem; font-size: 13px; color: var(--ink-soft); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+.map-wrap {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+svg#map { display: block; width: 100%; height: auto; }
+.school-dot { cursor: pointer; stroke: var(--panel); stroke-width: 1.2; }
+.school-dot:hover, .school-dot.selected { stroke: var(--ink); stroke-width: 2; }
+.school-label { font-family: 'Karla', sans-serif; font-size: 9px; fill: var(--ink-soft); pointer-events: none; }
+
+.filter-row { display: flex; gap: 0.4rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+.filter-chip {
+  font-family: 'Karla', sans-serif;
+  font-size: 13px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 0.3rem 0.85rem;
+  cursor: pointer;
+}
+.filter-chip.active { color: var(--panel); border-color: transparent; }
+.filter-chip[data-league="ALL"].active { background: var(--ink); }
+.filter-chip[data-league="KingCo"].active { background: var(--kingco); }
+.filter-chip[data-league="NPSL"].active { background: var(--npsl); }
+.filter-chip[data-league="SPSL"].active { background: var(--spsl); }
+.filter-chip[data-league="Metro"].active { background: var(--metro); }
+
+#school-info {
+  margin-top: 0.85rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  font-size: 14px;
+  min-height: 1.2em;
+}
+#school-info .name { font-family: 'Oswald', sans-serif; font-size: 17px; font-weight: 500; }
+#school-info .meta { color: var(--ink-soft); margin-top: 2px; }
+#school-info .detail-section { margin-top: 0.9rem; padding-top: 0.7rem; border-top: 1px solid var(--line); }
+#school-info .detail-section h4 { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 500; margin: 0 0 0.4rem; color: var(--ink); }
+#school-info .detail-empty { font-size: 13px; color: var(--ink-soft); }
+#school-info .content-link { display: block; font-size: 13px; padding: 0.3rem 0; color: var(--turf-dark); text-decoration: none; }
+#school-info .content-link:hover { text-decoration: underline; }
+@media (prefers-color-scheme: dark) { #school-info .content-link { color: var(--amber); } }
+:root[data-theme="dark"] #school-info .content-link { color: var(--amber); }
+
+form { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 1.1rem 1.25rem 1.3rem; }
+.field { margin-bottom: 0.9rem; }
+.field label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 0.3rem; }
+.field select, .field input {
+  width: 100%;
+  font-family: 'Karla', sans-serif;
+  font-size: 16px;
+  padding: 0.6rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+}
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.score-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0.6rem; }
+.score-row span { text-align: center; color: var(--ink-soft); font-family: 'Oswald', sans-serif; }
+button.submit {
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  background: var(--turf);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.65rem 1.4rem;
+  cursor: pointer;
+  margin-top: 0.2rem;
+}
+button.submit:active { transform: scale(0.98); }
+.error-text { color: #B0432F; font-size: 13px; margin-top: 0.3rem; }
+form .submit + .submit { margin-left: 0.6rem; }
+@media (max-width: 480px) {
+  button.submit { width: 100%; }
+  form .submit + .submit { margin-left: 0; margin-top: 0.5rem; }
+}
+
+.status-badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-family: 'Karla', sans-serif; }
+.status-badge.scheduled { background: rgba(74,92,84,0.12); color: var(--ink-soft); }
+.status-badge.live { background: rgba(217,164,65,0.2); color: var(--amber-dark); }
+@media (prefers-color-scheme: dark) { .status-badge.live { color: var(--amber); } }
+:root[data-theme="dark"] .status-badge.live { color: var(--amber); }
+.status-badge.final { background: rgba(60,122,92,0.15); color: var(--turf-dark); }
+.edit-link { font-size: 12px; color: var(--turf-dark); cursor: pointer; text-decoration: underline; background: none; border: none; padding: 0; margin-left: 8px; }
+@media (prefers-color-scheme: dark) { .edit-link { color: var(--amber); } }
+:root[data-theme="dark"] .edit-link { color: var(--amber); }
+
+.feed-time { background: var(--bg); border-radius: 6px; padding: 0.3rem 0.7rem; font-family: 'Oswald', sans-serif; font-style: italic; font-size: 13px; color: var(--ink-soft); margin: 0.9rem 0 0.4rem; }
+.feed-time:first-child { margin-top: 0; }
+.feed-event { display: flex; gap: 10px; padding: 0.3rem 0.2rem 0.9rem; }
+.feed-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.feed-event .scorer { font-weight: 500; font-size: 14px; }
+.feed-event .assist { color: var(--ink-soft); font-size: 13px; margin-top: 1px; }
+.feed-event .desc { font-size: 13px; color: var(--ink-soft); margin-top: 3px; line-height: 1.4; }
+
+.reports-list { margin-top: 1.5rem; }
+.reports-list h3 { font-size: 15px; margin-bottom: 0.6rem; }
+.report-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.report-card .teams { font-weight: 500; }
+.report-card .score { font-family: 'Oswald', sans-serif; font-size: 17px; color: var(--amber-dark); }
+@media (prefers-color-scheme: dark) { .report-card .score { color: var(--amber); } }
+:root[data-theme="dark"] .report-card .score { color: var(--amber); }
+.report-card .meta { color: var(--ink-soft); font-size: 12px; }
+.empty { color: var(--ink-soft); font-size: 14px; padding: 0.75rem 0; }
+
+.school-list-header { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+
+/* Desktop split-pane layouts — map + detail side by side, form + list side by side */
+#map-view {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.5rem;
+  align-items: start;
+}
+#map-view .map-col { grid-column: 1; }
+#map-view #school-info { grid-column: 2; margin-top: 0; position: sticky; top: 1.5rem; max-height: calc(100vh - 3rem); overflow-y: auto; }
+
+.form-list-split {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+.form-list-split .reports-list { margin-top: 0; }
+.school-list-header h3 { font-size: 15px; font-weight: 500; }
+.league-group { margin-bottom: 1rem; }
+.league-group-title { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 500; color: var(--ink); margin: 0.9rem 0 0.3rem; }
+.div-group-title { font-size: 12px; color: var(--ink-soft); margin: 0.4rem 0 0.2rem; display: flex; align-items: center; gap: 6px; }
+.school-row { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 0.15rem 0; }
+.school-row .swatch { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+<div class="sidebar">
+  <h1>KingCo · NPSL · SPSL · Metro Sports Tracker</h1>
+  <p>Desktop view &mdash; prototype for real-time WA high school scores, built for coaches and ADs.</p>
+  <div class="tabs">
+    <button class="tab-btn active" data-view="map-view">Map</button>
+    <button class="tab-btn" data-view="schedule-view">Schedule</button>
+    <button class="tab-btn" data-view="live-view">Live update</button>
+    <button class="tab-btn" data-view="content-view">Add content link</button>
+  </div>
+</div>
+<div class="main-content">
+
+<div id="map-view" class="view active">
+  <div class="map-col">
+  <div class="notice">Marker positions are city-level approximations, not geocoded addresses &mdash; final coordinates come from the OSPI enrichment pipeline.</div>
+  <div class="legend" id="legend"></div>
+  <div class="filter-row">
+    <button class="filter-chip active" data-league="ALL">All leagues</button>
+    <button class="filter-chip" data-league="KingCo">KingCo</button>
+    <button class="filter-chip" data-league="NPSL">NPSL</button>
+    <button class="filter-chip" data-league="SPSL">SPSL</button>
+    <button class="filter-chip" data-league="Metro">Metro</button>
+  </div>
+  <div class="map-wrap">
+    <svg id="map" viewBox="0 0 640 560" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <div class="school-list-header">
+    <h3>All schools, by conference and division</h3>
+  </div>
+  <div id="school-list"></div>
+  </div>
+  <div id="school-info">Click a school on the map to see its league, division, and WIAA district.</div>
+</div>
+
+<div id="schedule-view" class="view">
+  <div class="form-list-split">
+  <div>
+  <div class="notice">Prototype only &mdash; schedule saves to this browser, not to a shared server yet. Upload games ahead of time here; use Live update to report scores as they happen.</div>
+  <form id="schedule-form">
+    <div class="field">
+      <label for="school-select">School</label>
+      <select id="school-select" required></select>
+    </div>
+    <div class="field">
+      <label for="sport-select">Sport</label>
+      <select id="sport-select" required>
+        <option value="">Choose a sport</option>
+        <option>Football</option>
+        <option>Volleyball</option>
+        <option>Boys soccer</option>
+        <option>Girls soccer</option>
+        <option>Boys basketball</option>
+        <option>Girls basketball</option>
+        <option>Baseball</option>
+        <option>Softball</option>
+        <option>Cross country</option>
+        <option>Track and field</option>
+        <option>Wrestling</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="opponent-input">Opponent</label>
+      <input id="opponent-input" type="text" placeholder="e.g. Bothell High School" required>
+    </div>
+    <div class="field">
+      <label for="date-input">Game date</label>
+      <input id="date-input" type="date" required>
+    </div>
+    <div class="field">
+      <label for="time-input">Game time (optional)</label>
+      <input id="time-input" type="time">
+    </div>
+    <div class="field">
+      <label for="venue-input">Location (optional)</label>
+      <input id="venue-input" type="text" placeholder="e.g. Stadium Bowl, Tacoma">
+    </div>
+    <div id="schedule-form-error" class="error-text" style="display:none;"></div>
+    <button type="submit" class="submit" id="schedule-submit-btn">Add to schedule</button>
+    <button type="button" class="submit" id="schedule-cancel-btn" style="display:none; background:transparent; color:var(--ink-soft); border:1px solid var(--line);">Cancel edit</button>
+  </form>
+  </div>
+  <div>
+  <div class="filter-row">
+    <button class="filter-chip active" data-sched-filter="upcoming">Upcoming</button>
+    <button class="filter-chip" data-sched-filter="all">All games</button>
+  </div>
+  <div class="reports-list">
+    <h3>Scheduled games on this device</h3>
+    <div id="schedule-container"><div class="empty">No games scheduled yet.</div></div>
+  </div>
+  </div>
+  </div>
+</div>
+
+<div id="live-view" class="view">
+  <div class="form-list-split">
+  <div>
+  <div class="notice">Prototype only &mdash; live updates save to this browser, not to a shared server yet. This is meant for anyone at the game &mdash; fans included &mdash; to report scoring as it happens.</div>
+  <form id="live-form">
+    <div class="field">
+      <label for="live-game-select">Game</label>
+      <select id="live-game-select" required></select>
+    </div>
+    <div class="field">
+      <label for="live-period-input">Period (e.g. 2nd Quarter, 1st Half, OT)</label>
+      <input id="live-period-input" type="text" placeholder="e.g. 3rd Quarter">
+    </div>
+    <div class="field">
+      <label for="live-team-select">Who scored</label>
+      <select id="live-team-select">
+        <option value="us">Selected school</option>
+        <option value="opponent">Opponent</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="live-scorer-input">Scorer (optional)</label>
+      <input id="live-scorer-input" type="text" placeholder="e.g. Jordan Smith">
+    </div>
+    <div class="field">
+      <label for="live-assist-input">Assisted by (optional)</label>
+      <input id="live-assist-input" type="text" placeholder="e.g. Riley Chen, Sam Park">
+    </div>
+    <div class="field">
+      <label for="live-description-input">Play description (optional)</label>
+      <input id="live-description-input" type="text" placeholder="e.g. Corner kick crossed for a header near post">
+    </div>
+    <div class="field">
+      <label>Updated score</label>
+      <div class="score-row">
+        <input id="live-score-us" type="number" min="0" placeholder="Us" required>
+        <span>&ndash;</span>
+        <input id="live-score-them" type="number" min="0" placeholder="Them" required>
+      </div>
+    </div>
+    <div id="live-form-error" class="error-text" style="display:none;"></div>
+    <button type="submit" class="submit">Log score update</button>
+    <button type="button" class="submit" id="live-final-btn" style="background:transparent; color:var(--ink-soft); border:1px solid var(--line);">Mark game final</button>
+  </form>
+  </div>
+  <div>
+  <div class="reports-list">
+    <h3>Live event log for selected game</h3>
+    <div id="live-log-container"><div class="empty">Choose a game above.</div></div>
+  </div>
+  </div>
+  </div>
+</div>
+
+<div id="content-view" class="view">
+  <div class="form-list-split">
+  <div>
+  <div class="notice">Prototype only &mdash; links save to this browser, not to a shared server yet.</div>
+  <form id="content-form">
+    <div class="field">
+      <label for="content-school-select">School</label>
+      <select id="content-school-select" required></select>
+    </div>
+    <div class="field">
+      <label for="content-url-input">Article URL</label>
+      <input id="content-url-input" type="url" placeholder="https://..." required>
+    </div>
+    <div class="field">
+      <label for="content-title-input">Title</label>
+      <input id="content-title-input" type="text" placeholder="e.g. Federal Way clinches league title" required>
+    </div>
+    <div class="field">
+      <label for="content-source-input">Source (optional)</label>
+      <input id="content-source-input" type="text" placeholder="e.g. Seattle Times, a coach's Substack">
+    </div>
+    <div id="content-form-error" class="error-text" style="display:none;"></div>
+    <button type="submit" class="submit">Add link</button>
+  </form>
+  </div>
+  <div>
+  <div class="reports-list">
+    <h3>Recent links added on this device</h3>
+    <div id="content-links-container"><div class="empty">No links added yet.</div></div>
+  </div>
+  </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+const SCHOOLS = [
+  {name:"Bellevue", league:"KingCo", div:"3A", lat:47.610, lon:-122.201},
+  {name:"Bothell", league:"KingCo", div:"4A", lat:47.760, lon:-122.205},
+  {name:"Eastlake", league:"KingCo", div:"4A", lat:47.616, lon:-122.036},
+  {name:"Hazen", league:"KingCo", div:"4A", lat:47.462, lon:-122.192},
+  {name:"Inglemoor", league:"KingCo", div:"3A", lat:47.757, lon:-122.244},
+  {name:"Interlake", league:"KingCo", div:"3A", lat:47.605, lon:-122.185},
+  {name:"Issaquah", league:"KingCo", div:"4A", lat:47.530, lon:-122.033},
+  {name:"Juanita", league:"KingCo", div:"4A", lat:47.700, lon:-122.220},
+  {name:"Lake Washington", league:"KingCo", div:"4A", lat:47.677, lon:-122.209},
+  {name:"Liberty", league:"KingCo", div:"3A", lat:47.483, lon:-122.130},
+  {name:"Mercer Island", league:"KingCo", div:"3A", lat:47.570, lon:-122.222},
+  {name:"Mount Si", league:"KingCo", div:"4A", lat:47.523, lon:-121.883},
+  {name:"Newport", league:"KingCo", div:"4A", lat:47.590, lon:-122.170},
+  {name:"North Creek", league:"KingCo", div:"4A", lat:47.771, lon:-122.196},
+  {name:"Redmond", league:"KingCo", div:"4A", lat:47.674, lon:-122.121},
+  {name:"Sammamish (Bellevue)", league:"KingCo", div:"3A", lat:47.620, lon:-122.180},
+  {name:"Skyline", league:"KingCo", div:"4A", lat:47.616, lon:-122.036},
+  {name:"Woodinville", league:"KingCo", div:"4A", lat:47.754, lon:-122.163},
+  {name:"Cedarcrest (Duvall)", league:"KingCo", div:"2A", lat:47.726, lon:-121.978},
+  {name:"Evergreen (Highline)", league:"KingCo", div:"2A", lat:47.475, lon:-122.318},
+  {name:"Highline (Burien)", league:"KingCo", div:"3A", lat:47.478, lon:-122.331},
+  {name:"Foster", league:"KingCo", div:"2A", lat:47.474, lon:-122.284},
+  {name:"Lindbergh", league:"KingCo", div:"2A", lat:47.500, lon:-122.187},
+  {name:"Renton", league:"KingCo", div:"2A", lat:47.483, lon:-122.207},
+  {name:"Tyee", league:"KingCo", div:"1A", lat:47.470, lon:-122.290},
+
+  {name:"Auburn", league:"NPSL", div:"4A", lat:47.307, lon:-122.230},
+  {name:"Auburn Mountainview", league:"NPSL", div:"3A", lat:47.294, lon:-122.184},
+  {name:"Auburn Riverside", league:"NPSL", div:"4A", lat:47.284, lon:-122.204},
+  {name:"Decatur", league:"NPSL", div:"3A", lat:47.322, lon:-122.312},
+  {name:"Federal Way", league:"NPSL", div:"3A", lat:47.322, lon:-122.312},
+  {name:"Thomas Jefferson", league:"NPSL", div:"3A", lat:47.313, lon:-122.245},
+  {name:"Todd Beamer", league:"NPSL", div:"3A", lat:47.336, lon:-122.317},
+  {name:"Kent-Meridian", league:"NPSL", div:"3A", lat:47.381, lon:-122.235},
+  {name:"Kentlake", league:"NPSL", div:"3A", lat:47.352, lon:-122.104},
+  {name:"Kentridge", league:"NPSL", div:"4A", lat:47.381, lon:-122.212},
+  {name:"Kentwood", league:"NPSL", div:"4A", lat:47.361, lon:-122.150},
+  {name:"Tahoma", league:"NPSL", div:"4A", lat:47.361, lon:-122.031},
+  {name:"Mount Rainier", league:"NPSL", div:"4A", lat:47.402, lon:-122.314},
+  {name:"Kennedy Catholic", league:"NPSL", div:"4A", lat:47.469, lon:-122.346},
+  {name:"Stadium (Tacoma)", league:"NPSL", div:"4A", lat:47.264, lon:-122.449},
+  {name:"Enumclaw", league:"NPSL", div:"3A", lat:47.205, lon:-121.991},
+  {name:"White River", league:"NPSL", div:"3A", lat:47.167, lon:-122.033},
+
+  {name:"Puyallup", league:"SPSL", div:"4A", lat:47.185, lon:-122.293},
+  {name:"Emerald Ridge", league:"SPSL", div:"4A", lat:47.145, lon:-122.322},
+  {name:"Rogers", league:"SPSL", div:"4A", lat:47.180, lon:-122.320},
+  {name:"Spanaway Lake", league:"SPSL", div:"4A", lat:47.104, lon:-122.435},
+  {name:"Bethel", league:"SPSL", div:"4A", lat:47.083, lon:-122.348},
+  {name:"Curtis", league:"SPSL", div:"4A", lat:47.219, lon:-122.552},
+  {name:"Graham-Kapowsin", league:"SPSL", div:"4A", lat:46.988, lon:-122.295},
+  {name:"Sumner", league:"SPSL", div:"4A", lat:47.202, lon:-122.235},
+  {name:"Bonney Lake", league:"SPSL", div:"4A", lat:47.177, lon:-122.188},
+  {name:"Olympia", league:"SPSL", div:"4A", lat:47.043, lon:-122.896},
+  {name:"South Kitsap", league:"SPSL", div:"4A", lat:47.540, lon:-122.635},
+  {name:"Yelm", league:"SPSL", div:"4A", lat:46.942, lon:-122.605},
+
+  {name:"Lincoln (Seattle)", league:"Metro", div:"4A", lat:47.661, lon:-122.334},
+  {name:"Ballard", league:"Metro", div:"3A", lat:47.668, lon:-122.384},
+  {name:"Bishop Blanchet", league:"Metro", div:"3A", lat:47.716, lon:-122.348},
+  {name:"Eastside Catholic", league:"Metro", div:"3A", lat:47.615, lon:-122.038},
+  {name:"Franklin (Seattle)", league:"Metro", div:"3A", lat:47.573, lon:-122.287},
+  {name:"Garfield", league:"Metro", div:"3A", lat:47.618, lon:-122.302},
+  {name:"Holy Names Academy", league:"Metro", div:"3A", lat:47.625, lon:-122.315},
+  {name:"Ingraham", league:"Metro", div:"3A", lat:47.715, lon:-122.334},
+  {name:"Lakeside School", league:"Metro", div:"3A", lat:47.703, lon:-122.293},
+  {name:"O'Dea", league:"Metro", div:"3A", lat:47.614, lon:-122.320},
+  {name:"Rainier Beach", league:"Metro", div:"3A", lat:47.515, lon:-122.267},
+  {name:"Roosevelt (Seattle)", league:"Metro", div:"3A", lat:47.673, lon:-122.316},
+  {name:"Seattle Academy", league:"Metro", div:"3A", lat:47.612, lon:-122.318},
+  {name:"Seattle Prep", league:"Metro", div:"3A", lat:47.633, lon:-122.318},
+  {name:"West Seattle", league:"Metro", div:"3A", lat:47.560, lon:-122.386},
+  {name:"Chief Sealth", league:"Metro", div:"2A", lat:47.522, lon:-122.376},
+  {name:"Cleveland", league:"Metro", div:"2A", lat:47.556, lon:-122.298},
+  {name:"Nathan Hale", league:"Metro", div:"2A", lat:47.708, lon:-122.290},
+];
+
+const LEAGUE_BASE = { KingCo: "#1F7A4C", NPSL: "#6B3FA0", SPSL: "#1E3A5F", Metro: "#C4344F" };
+const LEAGUE_DISTRICT = { KingCo: 2, Metro: 2, NPSL: 3, SPSL: 3 };
+// Graded shades per division within a league: darkest = highest classification, lightest = lowest.
+// Four distinct hues (evergreen / bronze-amber / navy / crimson) so leagues never read as
+// variants of one another, each stepped by lightness for its own classifications.
+const DIVISION_SHADES = {
+  KingCo: { "4A": "#0F3D2A", "3A": "#1F7A4C", "2A": "#5CB585", "1A": "#A8DBC0" },
+  NPSL:   { "4A": "#4A1F6E", "3A": "#6B3FA0" },
+  SPSL:   { "4A": "#1E3A5F" },
+  Metro:  { "4A": "#7A1330", "3A": "#C4344F", "2A": "#E8899C" },
+};
+function schoolColor(s) {
+  const shades = DIVISION_SHADES[s.league];
+  if (shades && s.div && shades[s.div]) return shades[s.div];
+  return LEAGUE_BASE[s.league] || "#888";
+}
+const DIVISION_ORDER = { "4A": 0, "3A": 1, "2A": 2, "1A": 3 };
+function sortSchools(list) {
+  return list.slice().sort((a, b) => {
+    if (a.league !== b.league) return a.league.localeCompare(b.league);
+    const da = DIVISION_ORDER[a.div] ?? 9, db = DIVISION_ORDER[b.div] ?? 9;
+    if (da !== db) return da - db;
+    return a.name.localeCompare(b.name);
+  });
+}
+
+const BOUNDS = { minLat: 46.85, maxLat: 47.85, minLon: -123.0, maxLon: -121.85 };
+const W = 640, H = 560, PAD = 24;
+function project(lat, lon) {
+  const x = PAD + ((lon - BOUNDS.minLon) / (BOUNDS.maxLon - BOUNDS.minLon)) * (W - 2*PAD);
+  const y = PAD + ((BOUNDS.maxLat - lat) / (BOUNDS.maxLat - BOUNDS.minLat)) * (H - 2*PAD);
+  return [x, y];
+}
+
+const svg = document.getElementById('map');
+let activeLeague = 'ALL';
+let selectedIdx = null;
+
+function renderMap() {
+  svg.innerHTML = '';
+  SCHOOLS.forEach((s, i) => {
+    if (activeLeague !== 'ALL' && s.league !== activeLeague) return;
+    const [x, y] = project(s.lat, s.lon);
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+    const hitArea = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    hitArea.setAttribute('cx', x);
+    hitArea.setAttribute('cy', y);
+    hitArea.setAttribute('r', 12);
+    hitArea.setAttribute('fill', 'transparent');
+    hitArea.style.cursor = 'pointer';
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', selectedIdx === i ? 6 : 4.5);
+    circle.setAttribute('fill', schoolColor(s));
+    circle.classList.add('school-dot');
+    if (selectedIdx === i) circle.classList.add('selected');
+    circle.style.pointerEvents = 'none';
+
+    const onTap = () => {
+      selectedIdx = i;
+      activeLeague = s.league;
+      document.querySelectorAll('.filter-chip').forEach(b => b.classList.toggle('active', b.dataset.league === s.league));
+      renderMap();
+      renderSchoolList();
+      showInfo(s);
+    };
+    hitArea.addEventListener('click', onTap);
+    hitArea.addEventListener('mouseenter', () => circle.setAttribute('r', 6));
+    hitArea.addEventListener('mouseleave', () => circle.setAttribute('r', selectedIdx === i ? 6 : 4.5));
+
+    g.appendChild(hitArea);
+    g.appendChild(circle);
+    svg.appendChild(g);
+  });
+}
+
+function showInfo(s) {
+  const div = document.getElementById('school-info');
+  const games = loadSchedule().filter(g => g.school === s.name);
+  const today = new Date().toISOString().slice(0, 10);
+
+  const live = games.filter(g => g.status === 'live');
+  const upcoming = games.filter(g => g.status === 'scheduled' && g.date >= today).sort((a, b) => a.date.localeCompare(b.date));
+  const completed = games.filter(g => g.status === 'final').sort((a, b) => b.date.localeCompare(a.date));
+
+  let liveHtml = '';
+  if (live.length) {
+    liveHtml = '<div class="detail-section"><h4>Live now</h4>' + live.map(g => {
+      const events = eventsForGame(g.id);
+      const last = events[events.length - 1];
+      return '<div class="content-link" style="color:var(--ink); text-decoration:none;">' +
+        g.sport + ' vs ' + g.opponent + ' &mdash; <b>' + g.scoreUs + '&ndash;' + g.scoreThem + '</b>' +
+        '<span class="meta" style="display:block; font-size:11px;">' +
+        (last ? (last.period || 'In progress') + (last.scorer ? ' &middot; last: ' + last.scorer : '') : 'In progress') +
+        '</span></div>';
+    }).join('') + '</div>';
+  }
+
+  let nextGameHtml;
+  if (upcoming.length) {
+    const g = upcoming[0];
+    nextGameHtml =
+      '<div class="content-link" style="color:var(--ink); text-decoration:none;">' +
+      g.sport + ' vs ' + g.opponent +
+      '<span class="meta" style="display:block; font-size:11px;">' +
+      g.date + (g.time ? ' at ' + g.time : '') + (g.venue ? ' &middot; ' + g.venue : '') +
+      '</span></div>';
+  } else {
+    nextGameHtml = '<div class="detail-empty">No upcoming game scheduled for this school yet.</div>';
+  }
+
+  let scoresHtml;
+  if (completed.length) {
+    scoresHtml = completed.slice(0, 5).map(g =>
+      '<div class="content-link" style="color:var(--ink); text-decoration:none;">' +
+      g.sport + ' vs ' + g.opponent + ' &mdash; <b>' + g.scoreUs + '&ndash;' + g.scoreThem + '</b>' +
+      '<span class="meta" style="display:block; font-size:11px;">' + g.date + (g.venue ? ' &middot; ' + g.venue : '') + '</span></div>'
+    ).join('');
+  } else {
+    scoresHtml = '<div class="detail-empty">No completed scores for this school yet.</div>';
+  }
+
+  const links = loadContentLinks().filter(l => l.school === s.name);
+  let contentHtml;
+  if (links.length) {
+    contentHtml = links.slice().reverse().map(l =>
+      '<a class="content-link" href="' + l.url + '" target="_blank" rel="noopener">' + l.title +
+      (l.source ? ' <span class="meta" style="font-size:11px;">&mdash; ' + l.source + '</span>' : '') + '</a>'
+    ).join('');
+  } else {
+    contentHtml = '<div class="detail-empty">No linked articles yet for this school. Add one from the Add content link tab.</div>';
+  }
+
+  div.innerHTML =
+    '<div class="name">' + s.name + '</div>' +
+    '<div class="meta">' + s.league + (s.div ? ' &middot; ' + s.div : '') + ' &middot; WIAA District ' + LEAGUE_DISTRICT[s.league] + '</div>' +
+    liveHtml +
+    '<div class="detail-section"><h4>Next game</h4>' + nextGameHtml + '</div>' +
+    '<div class="detail-section"><h4>Recent scores</h4>' + scoresHtml + '</div>' +
+    '<div class="detail-section"><h4>Linked content</h4>' + contentHtml + '</div>';
+}
+
+document.querySelectorAll('.filter-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeLeague = btn.dataset.league;
+    selectedIdx = null;
+    renderMap();
+    renderSchoolList();
+  });
+});
+
+renderMap();
+
+function renderLegend() {
+  const legend = document.getElementById('legend');
+  legend.innerHTML = '';
+  Object.keys(DIVISION_SHADES).forEach(league => {
+    Object.entries(DIVISION_SHADES[league]).forEach(([div, color]) => {
+      const span = document.createElement('span');
+      span.innerHTML = '<span class="dot" style="background:' + color + '"></span>' + league + ' ' + div;
+      legend.appendChild(span);
+    });
+  });
+}
+renderLegend();
+
+function renderSchoolList() {
+  const container = document.getElementById('school-list');
+  container.innerHTML = '';
+  const sorted = sortSchools(activeLeague === 'ALL' ? SCHOOLS : SCHOOLS.filter(s => s.league === activeLeague));
+  let lastLeague = null, lastDiv = null;
+  let leagueDiv = null, divDiv = null;
+  sorted.forEach(s => {
+    if (s.league !== lastLeague) {
+      lastLeague = s.league;
+      lastDiv = null;
+      leagueDiv = document.createElement('div');
+      leagueDiv.className = 'league-group';
+      const title = document.createElement('div');
+      title.className = 'league-group-title';
+      title.textContent = s.league + ' (WIAA District ' + LEAGUE_DISTRICT[s.league] + ')';
+      leagueDiv.appendChild(title);
+      container.appendChild(leagueDiv);
+    }
+    if (s.div !== lastDiv) {
+      lastDiv = s.div;
+      divDiv = document.createElement('div');
+      divDiv.className = 'div-group-title';
+      divDiv.innerHTML = '<span class="dot" style="background:' + schoolColor(s) + '"></span>' + (s.div || 'Unclassified');
+      leagueDiv.appendChild(divDiv);
+    }
+    const row = document.createElement('div');
+    row.className = 'school-row';
+    row.innerHTML = '<span class="swatch" style="background:' + schoolColor(s) + '"></span>' + s.name;
+    leagueDiv.appendChild(row);
+  });
+}
+renderSchoolList();
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.view).classList.add('active');
+  });
+});
+
+// ---- Light passcode gate ----
+// NOT real security: this passcode is sitting in plain JS anyone can read
+// via view-source. It's meant only to keep casual visitors from poking at
+// the write forms, not to protect against anyone who actually wants in.
+// Change PASSCODE below to whatever you want to share with your reporters.
+const PASSCODE = 'gogators26';
+const UNLOCK_KEY = 'wa_hs_sports_unlocked_v1';
+function isUnlocked() {
+  try { return localStorage.getItem(UNLOCK_KEY) === 'true'; } catch (e) { return false; }
+}
+function requestUnlock() {
+  const entered = prompt('Enter the reporter passcode to submit updates:');
+  if (entered === null) return false;
+  if (entered === PASSCODE) {
+    try { localStorage.setItem(UNLOCK_KEY, 'true'); } catch (e) {}
+    return true;
+  }
+  alert('That passcode is not correct.');
+  return false;
+}
+
+const schoolSelect = document.getElementById('school-select');
+SCHOOLS.slice().sort((a,b) => a.name.localeCompare(b.name)).forEach(s => {
+  const opt = document.createElement('option');
+  opt.value = s.name;
+  opt.textContent = s.name + ' (' + s.league + ')';
+  schoolSelect.appendChild(opt);
+});
+
+// ---- Schedule store: games uploaded ahead of time, editable ----
+const SCHEDULE_KEY = 'wa_hs_sports_schedule_v2';
+function loadSchedule() {
+  try {
+    const raw = localStorage.getItem(SCHEDULE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+function saveSchedule(games) {
+  try { localStorage.setItem(SCHEDULE_KEY, JSON.stringify(games)); } catch (e) {}
+}
+
+// ---- Live event log: period-by-period scoring, tied to a schedule game ----
+const EVENTS_KEY = 'wa_hs_sports_events_v1';
+function loadEvents() {
+  try {
+    const raw = localStorage.getItem(EVENTS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+function saveEvents(events) {
+  try { localStorage.setItem(EVENTS_KEY, JSON.stringify(events)); } catch (e) {}
+}
+function eventsForGame(gameId) {
+  return loadEvents().filter(ev => ev.gameId === gameId).sort((a, b) => a.reportedAt.localeCompare(b.reportedAt));
+}
+
+let editingGameId = null;
+let scheduleFilter = 'upcoming';
+
+function renderSchedule() {
+  const container = document.getElementById('schedule-container');
+  const today = new Date().toISOString().slice(0, 10);
+  let games = loadSchedule();
+  if (scheduleFilter === 'upcoming') games = games.filter(g => g.date >= today || g.status === 'live');
+  games = games.slice().sort((a, b) => a.date.localeCompare(b.date));
+
+  if (!games.length) {
+    container.innerHTML = '<div class="empty">No games scheduled yet.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  games.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'report-card';
+    const scoreDisplay = g.status === 'scheduled' ? '&mdash;' : (g.scoreUs + '&ndash;' + g.scoreThem);
+    const metaParts = [g.sport, g.date + (g.time ? ' ' + g.time : '')];
+    if (g.venue) metaParts.push(g.venue);
+    card.innerHTML =
+      '<div><div class="teams">' + g.school + ' vs ' + g.opponent +
+      ' <span class="status-badge ' + g.status + '">' + g.status + '</span>' +
+      '<button type="button" class="edit-link" data-edit-id="' + g.id + '">Edit</button></div>' +
+      '<div class="meta">' + metaParts.join(' &middot; ') + '</div></div>' +
+      '<div class="score">' + scoreDisplay + '</div>';
+    container.appendChild(card);
+  });
+
+  container.querySelectorAll('[data-edit-id]').forEach(btn => {
+    btn.addEventListener('click', () => startEditGame(btn.dataset.editId));
+  });
+}
+renderSchedule();
+
+document.querySelectorAll('[data-sched-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-sched-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    scheduleFilter = btn.dataset.schedFilter;
+    renderSchedule();
+  });
+});
+
+function startEditGame(id) {
+  const g = loadSchedule().find(x => x.id === id);
+  if (!g) return;
+  editingGameId = id;
+  schoolSelect.value = g.school;
+  document.getElementById('sport-select').value = g.sport;
+  document.getElementById('opponent-input').value = g.opponent;
+  document.getElementById('date-input').value = g.date;
+  document.getElementById('time-input').value = g.time || '';
+  document.getElementById('venue-input').value = g.venue || '';
+  document.getElementById('schedule-submit-btn').textContent = 'Save changes';
+  document.getElementById('schedule-cancel-btn').style.display = 'inline-block';
+  document.getElementById('schedule-view').scrollIntoView({ behavior: 'smooth' });
+}
+
+document.getElementById('schedule-cancel-btn').addEventListener('click', () => {
+  editingGameId = null;
+  document.getElementById('schedule-form').reset();
+  document.getElementById('schedule-submit-btn').textContent = 'Add to schedule';
+  document.getElementById('schedule-cancel-btn').style.display = 'none';
+});
+
+document.getElementById('schedule-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!isUnlocked() && !requestUnlock()) return;
+  const errorEl = document.getElementById('schedule-form-error');
+  errorEl.style.display = 'none';
+
+  const school = schoolSelect.value;
+  const sport = document.getElementById('sport-select').value;
+  const opponent = document.getElementById('opponent-input').value.trim();
+  const date = document.getElementById('date-input').value;
+  const time = document.getElementById('time-input').value;
+  const venue = document.getElementById('venue-input').value.trim();
+
+  if (!school || !sport || !opponent || !date) {
+    errorEl.textContent = 'Fill in school, sport, opponent, and date first.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  const games = loadSchedule();
+  if (editingGameId) {
+    const g = games.find(x => x.id === editingGameId);
+    if (g) { g.school = school; g.sport = sport; g.opponent = opponent; g.date = date; g.time = time; g.venue = venue; }
+    editingGameId = null;
+    document.getElementById('schedule-submit-btn').textContent = 'Add to schedule';
+    document.getElementById('schedule-cancel-btn').style.display = 'none';
+  } else {
+    games.push({
+      id: 'g' + Date.now() + Math.random().toString(36).slice(2, 7),
+      school, sport, opponent, date, time, venue,
+      status: 'scheduled', scoreUs: null, scoreThem: null
+    });
+  }
+  saveSchedule(games);
+  renderSchedule();
+  populateLiveGameSelect();
+  e.target.reset();
+});
+
+// ---- Live update tab ----
+const liveGameSelect = document.getElementById('live-game-select');
+function populateLiveGameSelect() {
+  const prev = liveGameSelect.value;
+  const games = loadSchedule()
+    .filter(g => g.status !== 'final')
+    .sort((a, b) => a.date.localeCompare(b.date));
+  liveGameSelect.innerHTML = '';
+  if (!games.length) {
+    liveGameSelect.innerHTML = '<option value="">No scheduled games yet &mdash; add one on the Schedule tab</option>';
+    renderLiveLog();
+    return;
+  }
+  games.forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g.id;
+    opt.textContent = g.school + ' vs ' + g.opponent + ' (' + g.date + (g.status === 'live' ? ', live' : '') + ')';
+    liveGameSelect.appendChild(opt);
+  });
+  if (prev && games.some(g => g.id === prev)) liveGameSelect.value = prev;
+  renderLiveLog();
+}
+populateLiveGameSelect();
+
+function renderLiveLog() {
+  const container = document.getElementById('live-log-container');
+  const gameId = liveGameSelect.value;
+  if (!gameId) {
+    container.innerHTML = '<div class="empty">Choose a game above.</div>';
+    return;
+  }
+  const g = loadSchedule().find(x => x.id === gameId);
+  const events = eventsForGame(gameId);
+  if (!g) { container.innerHTML = '<div class="empty">Game not found.</div>'; return; }
+
+  document.getElementById('live-score-us').value = g.scoreUs != null ? g.scoreUs : '';
+  document.getElementById('live-score-them').value = g.scoreThem != null ? g.scoreThem : '';
+
+  if (!events.length) {
+    container.innerHTML = '<div class="empty">No live updates logged yet for this game.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  // tallyByKey tracks each scorer's running count as we walk events in chronological order
+  const tally = {};
+  const withTally = events.map(ev => {
+    if (ev.scorer) {
+      const key = ev.team + '|' + ev.scorer;
+      tally[key] = (tally[key] || 0) + 1;
+      ev = Object.assign({}, ev, { tallyCount: tally[key] });
+    }
+    return ev;
+  });
+
+  withTally.slice().reverse().forEach(ev => {
+    const timeBar = document.createElement('div');
+    timeBar.className = 'feed-time';
+    timeBar.textContent = ev.gameClock || ev.period || 'Time not given';
+    container.appendChild(timeBar);
+
+    const who = ev.team === 'us' ? g.school : g.opponent;
+    const dotColor = ev.team === 'us' ? schoolColor(SCHOOLS.find(x => x.name === g.school) || {}) : '#888';
+
+    const row = document.createElement('div');
+    row.className = 'feed-event';
+    row.innerHTML =
+      '<span class="feed-dot" style="background:' + dotColor + '"></span>' +
+      '<div>' +
+      '<div class="scorer">' + (ev.scorer || who) + (ev.tallyCount ? ' (' + ev.tallyCount + ')' : '') + '</div>' +
+      (ev.assist ? '<div class="assist">Assisted by: ' + ev.assist + '</div>' : '') +
+      (ev.description ? '<div class="desc">' + ev.description + '</div>' : '') +
+      '<div class="meta" style="font-size:11px; margin-top:3px;">' + who + ' &middot; ' + ev.scoreUs + '&ndash;' + ev.scoreThem + '</div>' +
+      '</div>';
+    container.appendChild(row);
+  });
+}
+
+liveGameSelect.addEventListener('change', renderLiveLog);
+
+document.getElementById('live-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!isUnlocked() && !requestUnlock()) return;
+  const errorEl = document.getElementById('live-form-error');
+  errorEl.style.display = 'none';
+
+  const gameId = liveGameSelect.value;
+  const period = document.getElementById('live-period-input').value.trim();
+  const team = document.getElementById('live-team-select').value;
+  const scorer = document.getElementById('live-scorer-input').value.trim();
+  const assist = document.getElementById('live-assist-input').value.trim();
+  const description = document.getElementById('live-description-input').value.trim();
+  const scoreUs = document.getElementById('live-score-us').value;
+  const scoreThem = document.getElementById('live-score-them').value;
+
+  if (!gameId || scoreUs === '' || scoreThem === '') {
+    errorEl.textContent = 'Choose a game and enter both scores.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  const events = loadEvents();
+  events.push({ gameId, period, gameClock: period, team, scorer, assist, description, scoreUs, scoreThem, reportedAt: new Date().toISOString() });
+  saveEvents(events);
+
+  const games = loadSchedule();
+  const g = games.find(x => x.id === gameId);
+  if (g) { g.scoreUs = scoreUs; g.scoreThem = scoreThem; g.status = 'live'; }
+  saveSchedule(games);
+
+  renderSchedule();
+  populateLiveGameSelect();
+  document.getElementById('live-period-input').value = '';
+  document.getElementById('live-scorer-input').value = '';
+  document.getElementById('live-assist-input').value = '';
+  document.getElementById('live-description-input').value = '';
+});
+
+document.getElementById('live-final-btn').addEventListener('click', () => {
+  if (!isUnlocked() && !requestUnlock()) return;
+  const gameId = liveGameSelect.value;
+  if (!gameId) return;
+  const games = loadSchedule();
+  const g = games.find(x => x.id === gameId);
+  if (g) { g.status = 'final'; }
+  saveSchedule(games);
+  renderSchedule();
+  populateLiveGameSelect();
+});
+
+const contentSchoolSelect = document.getElementById('content-school-select');
+SCHOOLS.slice().sort((a,b) => a.name.localeCompare(b.name)).forEach(s => {
+  const opt = document.createElement('option');
+  opt.value = s.name;
+  opt.textContent = s.name + ' (' + s.league + ')';
+  contentSchoolSelect.appendChild(opt);
+});
+
+const CONTENT_STORAGE_KEY = 'wa_hs_sports_content_links_v1';
+function loadContentLinks() {
+  try {
+    const raw = localStorage.getItem(CONTENT_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+function saveContentLinks(links) {
+  try { localStorage.setItem(CONTENT_STORAGE_KEY, JSON.stringify(links)); } catch (e) {}
+}
+function renderContentLinks() {
+  const links = loadContentLinks();
+  const container = document.getElementById('content-links-container');
+  if (!links.length) {
+    container.innerHTML = '<div class="empty">No links added yet.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  links.slice().reverse().forEach(l => {
+    const card = document.createElement('div');
+    card.className = 'report-card';
+    card.innerHTML =
+      '<div><div class="teams"><a class="content-link" style="display:inline;" href="' + l.url + '" target="_blank" rel="noopener">' + l.title + '</a></div>' +
+      '<div class="meta">' + l.school + (l.source ? ' &middot; ' + l.source : '') + '</div></div>';
+    container.appendChild(card);
+  });
+}
+renderContentLinks();
+
+document.getElementById('content-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!isUnlocked() && !requestUnlock()) return;
+  const errorEl = document.getElementById('content-form-error');
+  errorEl.style.display = 'none';
+
+  const school = contentSchoolSelect.value;
+  const url = document.getElementById('content-url-input').value.trim();
+  const title = document.getElementById('content-title-input').value.trim();
+  const source = document.getElementById('content-source-input').value.trim();
+
+  if (!school || !url || !title) {
+    errorEl.textContent = 'Fill in school, URL, and title first.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  const links = loadContentLinks();
+  links.push({ school, url, title, source });
+  saveContentLinks(links);
+  renderContentLinks();
+  e.target.reset();
+});
+</script>
+</body>
+</html>

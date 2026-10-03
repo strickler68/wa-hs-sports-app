@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WA HS Sports Tracker</title>
+<script>
+  // Simple device split: send phones/tablets to the mobile build,
+  // everything else to the desktop build. Either can be reached
+  // directly too (/mobile/, /desktop/) if this guess is wrong.
+  var isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  window.location.replace(isMobile ? "/mobile/" : "/desktop/");
+</script>
+</head>
+<body>
+<p>Loading… if you're not redirected, choose: <a href="/mobile/">Mobile</a> | <a href="/desktop/">Desktop</a></p>
+</body>
+</html>
