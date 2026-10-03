@@ -6,15 +6,29 @@ relevant. Lives in the same folder as the code on purpose.
 
 ## Backend (the current focus)
 
-- [ ] Install PostgreSQL + PostGIS locally
-- [ ] Load `schema.sql`, `seed_data.sql`, `db_roles_and_grants.sql`
-- [ ] Run PostgREST against it (`postgrest.conf`), confirm `GET /schools` works
+- [x] Install PostgreSQL + PostGIS (done in the Claude Code sandbox — not yet on a persistent/public host)
+- [x] Load `schema.sql`, `seed_data.sql`, `db_roles_and_grants.sql` — fixed a real bug along the way: `schema.sql`'s `schools` table had `city` declared twice, silently aborting the whole script before
+- [x] Run PostgREST against it, confirmed `GET /schools` returns real JSON for all 72 schools
 - [ ] Walk through every example in `postgrest_examples.md`
-- [ ] Run Martin, confirm vector tiles come back
+- [ ] Run Martin, confirm vector tiles come back (deferred — not a blocker at 72 points)
 - [ ] Wire `maplibre_demo.html` to Martin's tile endpoint instead of static GeoJSON
-- [ ] Wire the mobile app's `loadSchedule`/`saveSchedule`/etc. to PostgREST instead of `localStorage`
+- [ ] Wire the mobile app's `loadSchedule`/`saveSchedule`/etc. to the real backend instead of `localStorage` — **next concrete task**
 - [ ] Wire the desktop app the same way
 - [ ] Confirm both apps see the same data after that (the actual "one backend, many GUIs" test)
+
+## Public deployment (new — low/no-cost path chosen)
+
+- [x] Decided on stack: Supabase (free tier, DB+API) + Cloudflare Pages (free, static frontend hosting) + Cloudflare Registrar (~$10-12/yr domain) — total ~$1/mo amortized
+- [x] Project reorganized into `wa-hs-sports/` with `sql/ data/ docs/ frontend/ config/ demo/ public/ supabase/migrations/`
+- [x] `supabase/migrations/` prepared from the existing SQL files, with a Supabase-adapted roles file (Supabase's built-in `authenticator` role collides with the original `CREATE ROLE authenticator`; adapted version grants to Supabase's `anon`/`authenticated` roles instead)
+- [x] `public/` built as the Cloudflare Pages deploy root (device-split `index.html` → `/mobile/` or `/desktop/`)
+- [x] Git repo initialized and committed locally
+- [x] `DEPLOY.md` written — exact click-by-click steps for the account-creation parts only you can do
+- [ ] You: buy domain via Cloudflare Registrar
+- [ ] You: create Supabase project, run the 3 migrations in order, grab the project URL + anon key
+- [ ] You: create a GitHub repo and push this one to it
+- [ ] Rewire both frontends to call the real Supabase URL instead of `localStorage` (same task as above, just targeting the hosted DB instead of localhost)
+- [ ] You: connect the GitHub repo to Cloudflare Pages, attach the custom domain
 
 ## Data
 
