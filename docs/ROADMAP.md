@@ -26,7 +26,8 @@ relevant. Lives in the same folder as the code on purpose.
 - [x] `DEPLOY.md` written — exact click-by-click steps for the account-creation parts only you can do
 - [ ] You: buy domain via Cloudflare Registrar
 - [ ] You: create Supabase project, run the 3 migrations in order, grab the project URL + anon key
-- [ ] You: create a GitHub repo and push this one to it
+- [x] You: create a GitHub account + repo (`strickler68/wa-hs-sports`) and install the Claude GitHub App with push access
+- [ ] **BLOCKED**: push from this session failed — this session's GitHub access got locked to a now-dead username (`tstr490`, renamed to `strickler68`, no redirect). Fix: start a brand-new Claude Code conversation naming `strickler68/wa-hs-sports` from the first message. Full project backed up at `/mnt/user-data/outputs/wa-hs-sports-full-backup.tar.gz` in case the container doesn't carry over. See `docs/EOD_2026-10-03.md` for the full story.
 - [ ] Rewire both frontends to call the real Supabase URL instead of `localStorage` (same task as above, just targeting the hosted DB instead of localhost)
 - [ ] You: connect the GitHub repo to Cloudflare Pages, attach the custom domain
 
