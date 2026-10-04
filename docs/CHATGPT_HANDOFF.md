@@ -17,6 +17,39 @@ contents.
 
 ---
 
+## ⚠️ READ THIS FIRST — status as of 2026-10-03, end of day
+
+Everything below this notice describes the project as it stood **before**
+a major session that actually deployed it. The core facts (data model,
+school verification methodology, architecture reasoning) are still
+accurate, but the "current status" is now **out of date**. The real,
+current state:
+
+- **The project is live.** Repo: `github.com/strickler68/wa-hs-sports-app`.
+  Database: a real Supabase project (free tier), schema + 72 schools
+  loaded, Row Level Security configured. Hosting: Cloudflare Pages,
+  connected to the repo, auto-deploys on every push to `main`.
+- **The mobile app's Schedule and Live-update tabs now write to the real
+  database**, not `localStorage` — the "one backend, many GUIs"
+  architecture described below is no longer aspirational, it's running.
+  The desktop app still needs the same treatment (not done yet).
+- **Project tracking moved off this file's old recommendations.**
+  Backlog/sprint work now lives in **GitHub Issues + a Project board**
+  (hybrid-scrum), not a flat checklist. See `docs/WORKFLOW.md` in the
+  repo for the full process, and the repo's Issues tab for the live,
+  current backlog (6 user stories as of today).
+- **For the fullest, most current picture**, read, in this order:
+  1. `docs/EOD_2026-10-03.md` (in the repo) — today's full session log
+  2. `docs/WORKFLOW.md` (in the repo) — how backlog/sprints work now
+  3. `docs/ROADMAP.md` (in the repo) — high-level status/history
+  4. This file, for background/architecture reasoning that's still valid
+
+If you (the AI reading this) have access to the GitHub repo directly,
+prefer reading those files live over trusting this file's older sections
+below. If you don't, ask Tim to paste or upload them.
+
+---
+
 ## 1. What this is
 
 A real-time high school sports tracker for Washington State. The problem
