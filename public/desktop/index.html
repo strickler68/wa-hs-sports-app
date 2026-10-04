@@ -817,31 +817,131 @@ SCHOOLS.slice().sort((a,b) => a.name.localeCompare(b.name)).forEach(s => {
   schoolSelect.appendChild(opt);
 });
 
-// ---- Schedule store: games uploaded ahead of time, editable ----
-const SCHEDULE_KEY = 'wa_hs_sports_schedule_v2';
-function loadSchedule() {
-  try {
-    const raw = localStorage.getItem(SCHEDULE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch (e) { return []; }
+// ---- Supabase backend: replaces localStorage for the Schedule and Live
+// update tabs. Both apps (mobile + desktop) point at this same project,
+// which is the actual "one backend, many GUIs" architecture in effect —
+// see docs/HANDOFF.md for the full reasoning. Content links are still
+// localStorage-only for now (tracked in ROADMAP.md).
+const SUPABASE_URL = 'https://ezjimaeotjfwnjxofhbd.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_8zb53R7PQJgIb8c_TODPUQ_ASz6amV0';
+async function sb(path, options) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, Object.assign({
+    headers: Object.assign({
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    }, (options && options.headers) || {})
+  }, options));
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error('Supabase ' + res.status + ': ' + body);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
-function saveSchedule(games) {
-  try { localStorage.setItem(SCHEDULE_KEY, JSON.stringify(games)); } catch (e) {}
+
+// ---- Schedule store: games uploaded ahead of time, editable ----
+// `scheduleCache` mirrors the games table; it's refreshed from Supabase
+// and then read synchronously everywhere else in this file (same
+// interface loadSchedule() always had, so the rest of the app didn't
+// need to change into async code throughout).
+let scheduleCache = [];
+function rowToGame(row) {
+  return {
+    id: row.id,
+    school: row.home_school,
+    opponent: row.away_school,
+    sport: row.sport,
+    date: row.game_date,
+    time: row.game_time,
+    venue: row.venue,
+    status: row.status,
+    scoreUs: row.score_home,
+    scoreThem: row.score_away
+  };
+}
+function loadSchedule() {
+  return scheduleCache;
+}
+async function refreshSchedule() {
+  try {
+    const rows = await sb('games?select=*&order=game_date.asc');
+    scheduleCache = rows.map(rowToGame);
+  } catch (e) {
+    console.error('Failed to load schedule from Supabase:', e);
+  }
+  renderSchedule();
+  populateLiveGameSelect();
+}
+async function createGame(g) {
+  const rows = await sb('games', {
+    method: 'POST',
+    body: JSON.stringify({
+      sport: g.sport, home_school: g.school, away_school: g.opponent,
+      game_date: g.date, game_time: g.time || null, venue: g.venue || null,
+      status: 'scheduled'
+    })
+  });
+  await refreshSchedule();
+  return rows && rows[0];
+}
+async function updateGame(id, patch) {
+  const body = {};
+  if ('school' in patch) body.home_school = patch.school;
+  if ('opponent' in patch) body.away_school = patch.opponent;
+  if ('sport' in patch) body.sport = patch.sport;
+  if ('date' in patch) body.game_date = patch.date;
+  if ('time' in patch) body.game_time = patch.time || null;
+  if ('venue' in patch) body.venue = patch.venue || null;
+  if ('status' in patch) body.status = patch.status;
+  if ('scoreUs' in patch) body.score_home = patch.scoreUs;
+  if ('scoreThem' in patch) body.score_away = patch.scoreThem;
+  await sb('games?id=eq.' + encodeURIComponent(id), { method: 'PATCH', body: JSON.stringify(body) });
+  await refreshSchedule();
 }
 
 // ---- Live event log: period-by-period scoring, tied to a schedule game ----
-const EVENTS_KEY = 'wa_hs_sports_events_v1';
-function loadEvents() {
-  try {
-    const raw = localStorage.getItem(EVENTS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch (e) { return []; }
+let eventsCache = {};
+function rowToEvent(row) {
+  return {
+    gameId: row.game_id,
+    period: row.period,
+    gameClock: row.game_clock,
+    team: row.scoring_team === 'home' ? 'us' : 'away',
+    scorer: row.scorer_name,
+    assist: row.assisted_by,
+    description: row.play_description,
+    scoreUs: row.score_home,
+    scoreThem: row.score_away,
+    reportedAt: row.reported_at
+  };
 }
-function saveEvents(events) {
-  try { localStorage.setItem(EVENTS_KEY, JSON.stringify(events)); } catch (e) {}
+async function refreshEvents(gameId) {
+  if (!gameId) return;
+  try {
+    const rows = await sb('game_scoring_events?game_id=eq.' + encodeURIComponent(gameId) + '&order=reported_at.asc');
+    eventsCache[gameId] = rows.map(rowToEvent);
+  } catch (e) {
+    console.error('Failed to load live events from Supabase:', e);
+  }
+  renderLiveLog();
+}
+async function logScoringEvent(ev) {
+  await sb('game_scoring_events', {
+    method: 'POST',
+    body: JSON.stringify({
+      game_id: ev.gameId, period: ev.period, game_clock: ev.gameClock,
+      scoring_team: ev.team === 'us' ? 'home' : 'away',
+      scorer_name: ev.scorer || null, assisted_by: ev.assist || null,
+      play_description: ev.description || null,
+      score_home: ev.scoreUs, score_away: ev.scoreThem
+    })
+  });
+  await refreshEvents(ev.gameId);
 }
 function eventsForGame(gameId) {
-  return loadEvents().filter(ev => ev.gameId === gameId).sort((a, b) => a.reportedAt.localeCompare(b.reportedAt));
+  return eventsCache[gameId] || [];
 }
 
 let editingGameId = null;
@@ -878,7 +978,7 @@ function renderSchedule() {
     btn.addEventListener('click', () => startEditGame(btn.dataset.editId));
   });
 }
-renderSchedule();
+refreshSchedule();
 
 document.querySelectorAll('[data-sched-filter]').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -911,7 +1011,7 @@ document.getElementById('schedule-cancel-btn').addEventListener('click', () => {
   document.getElementById('schedule-cancel-btn').style.display = 'none';
 });
 
-document.getElementById('schedule-form').addEventListener('submit', (e) => {
+document.getElementById('schedule-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!isUnlocked() && !requestUnlock()) return;
   const errorEl = document.getElementById('schedule-form-error');
@@ -930,24 +1030,27 @@ document.getElementById('schedule-form').addEventListener('submit', (e) => {
     return;
   }
 
-  const games = loadSchedule();
-  if (editingGameId) {
-    const g = games.find(x => x.id === editingGameId);
-    if (g) { g.school = school; g.sport = sport; g.opponent = opponent; g.date = date; g.time = time; g.venue = venue; }
-    editingGameId = null;
-    document.getElementById('schedule-submit-btn').textContent = 'Add to schedule';
-    document.getElementById('schedule-cancel-btn').style.display = 'none';
-  } else {
-    games.push({
-      id: 'g' + Date.now() + Math.random().toString(36).slice(2, 7),
-      school, sport, opponent, date, time, venue,
-      status: 'scheduled', scoreUs: null, scoreThem: null
-    });
+  const submitBtn = document.getElementById('schedule-submit-btn');
+  const prevLabel = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Saving…';
+  try {
+    if (editingGameId) {
+      await updateGame(editingGameId, { school, sport, opponent, date, time, venue });
+      editingGameId = null;
+      document.getElementById('schedule-cancel-btn').style.display = 'none';
+    } else {
+      await createGame({ school, sport, opponent, date, time, venue });
+    }
+    e.target.reset();
+  } catch (err) {
+    errorEl.textContent = 'Could not save — check your connection and try again.';
+    errorEl.style.display = 'block';
+    console.error(err);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = editingGameId ? 'Save changes' : 'Add to schedule';
   }
-  saveSchedule(games);
-  renderSchedule();
-  populateLiveGameSelect();
-  e.target.reset();
 });
 
 // ---- Live update tab ----
@@ -970,9 +1073,9 @@ function populateLiveGameSelect() {
     liveGameSelect.appendChild(opt);
   });
   if (prev && games.some(g => g.id === prev)) liveGameSelect.value = prev;
-  renderLiveLog();
+  if (liveGameSelect.value) refreshEvents(liveGameSelect.value);
+  else renderLiveLog();
 }
-populateLiveGameSelect();
 
 function renderLiveLog() {
   const container = document.getElementById('live-log-container');
@@ -1027,9 +1130,9 @@ function renderLiveLog() {
   });
 }
 
-liveGameSelect.addEventListener('change', renderLiveLog);
+liveGameSelect.addEventListener('change', () => refreshEvents(liveGameSelect.value));
 
-document.getElementById('live-form').addEventListener('submit', (e) => {
+document.getElementById('live-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!isUnlocked() && !requestUnlock()) return;
   const errorEl = document.getElementById('live-form-error');
@@ -1050,33 +1153,29 @@ document.getElementById('live-form').addEventListener('submit', (e) => {
     return;
   }
 
-  const events = loadEvents();
-  events.push({ gameId, period, gameClock: period, team, scorer, assist, description, scoreUs, scoreThem, reportedAt: new Date().toISOString() });
-  saveEvents(events);
-
-  const games = loadSchedule();
-  const g = games.find(x => x.id === gameId);
-  if (g) { g.scoreUs = scoreUs; g.scoreThem = scoreThem; g.status = 'live'; }
-  saveSchedule(games);
-
-  renderSchedule();
-  populateLiveGameSelect();
-  document.getElementById('live-period-input').value = '';
-  document.getElementById('live-scorer-input').value = '';
-  document.getElementById('live-assist-input').value = '';
-  document.getElementById('live-description-input').value = '';
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.disabled = true;
+  try {
+    await logScoringEvent({ gameId, period, gameClock: period, team, scorer, assist, description, scoreUs, scoreThem });
+    await updateGame(gameId, { scoreUs, scoreThem, status: 'live' });
+    document.getElementById('live-period-input').value = '';
+    document.getElementById('live-scorer-input').value = '';
+    document.getElementById('live-assist-input').value = '';
+    document.getElementById('live-description-input').value = '';
+  } catch (err) {
+    errorEl.textContent = 'Could not save — check your connection and try again.';
+    errorEl.style.display = 'block';
+    console.error(err);
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
 });
 
-document.getElementById('live-final-btn').addEventListener('click', () => {
+document.getElementById('live-final-btn').addEventListener('click', async () => {
   if (!isUnlocked() && !requestUnlock()) return;
   const gameId = liveGameSelect.value;
   if (!gameId) return;
-  const games = loadSchedule();
-  const g = games.find(x => x.id === gameId);
-  if (g) { g.status = 'final'; }
-  saveSchedule(games);
-  renderSchedule();
-  populateLiveGameSelect();
+  await updateGame(gameId, { status: 'final' });
 });
 
 const contentSchoolSelect = document.getElementById('content-school-select');
