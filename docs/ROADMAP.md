@@ -59,11 +59,10 @@ relevant. Lives in the same folder as the code on purpose.
 
 ## Product / content
 
-- [ ] Recruit actual fan/stringer reporters — the real "who updates this" problem, still unsolved
+- [ ] Recruit actual crowdsourced contributors (fans/students/parents at games) — the real "who updates this" problem, still unsolved. **Not coach/AD outreach** — target audience is the crowd at the game, clarified 2026-10-04.
 - [ ] Revisit the X/Twitter-stringer idea once there's an audience to draw from
 - [ ] Self-host a WA-only Protomaps basemap for production (currently using MapLibre's free demo tiles, fine for dev, not for a real launch)
 - [ ] Scrollytelling / story-map feature — deferred in favor of the drill-down panels, which are done; revisit once there's enough real content to narrate
-- [ ] AD outreach — the original "reach out once there's a working prototype" plan; prototype now exists
 
 ## Done (for morale, and so this doesn't just read like a wall of open items)
 

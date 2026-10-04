@@ -85,6 +85,12 @@ just backend plumbing:
 
 ## House rules for this project (don't re-litigate without a reason)
 
+- **Target audience is crowdsourced, not coaches/ADs.** The people entering
+  schedules and live scores are fans, students, and parents at the game —
+  not official athletic department staff. Don't drift into
+  "coach/AD self-report" framing in UI copy, docs, or feature design;
+  earlier drafts used that language before this was clarified
+  (2026-10-04) and it's since been corrected in the app taglines.
 - Open-source stack, zero ArcGIS licensing — see `docs/TECH_STACK.md`.
 - Security is intentionally minimal right now (passcode-gate stopgap,
   not real auth) — the user's own words: "just enough to keep our
