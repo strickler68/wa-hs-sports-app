@@ -31,6 +31,17 @@ relevant. Lives in the same folder as the code on purpose.
 - [ ] Rewire both frontends to call the real Supabase URL instead of `localStorage` (same task as above, just targeting the hosted DB instead of localhost)
 - [ ] You: connect the GitHub repo to Cloudflare Pages, attach the custom domain
 
+## Design (parked — user has ideas, deliberately not discussing yet)
+
+- [ ] **PARKED**: user wants to revisit the map's visual design — look
+  specifically at `demo/maplibre_demo.html`'s rendering and how the
+  input data (`data/schools_seed.csv`, the 72-school coordinate set)
+  drives it. User has specific ideas already but said to park the
+  discussion until the current deploy work (Supabase + Cloudflare) is
+  finished. Don't start this unprompted — wait for the user to bring it
+  back up. See CLAUDE.md's "Quality bar" section for the general design
+  standard this should meet once it's picked back up.
+
 ## Data
 
 - [ ] Find the school-points layer number in the `Schools_Explorer_Data_2024` ArcGIS service
