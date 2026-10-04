@@ -56,6 +56,28 @@ format as existing ones) summarizing what happened, what's still open,
 and the recommended next step — this file's whole point is making that
 handoff unnecessary to ask for.
 
+## Quality bar for the end product
+
+This is not just a working prototype — the user has explicitly said the
+finished app needs to be **highly functional, highly user-friendly, and
+has to look really good**. Keep this in mind on every UI/UX change, not
+just backend plumbing:
+- Don't ship something that merely works if a noticeably better version
+  is a reasonable amount of extra effort — polish matters here, it's not
+  a "fix it later" item.
+- When touching `public/mobile/index.html` or `public/desktop/index.html`,
+  look at the surrounding design (spacing, color, interaction feedback —
+  see the KingCo/NPSL/SPSL/Metro color system already established) and
+  match or improve it, not just bolt on functional-but-ugly markup.
+- Loading states, error states, and empty states all count as part of
+  "highly functional" — a blank screen or a silent failure while waiting
+  on a Supabase call is not acceptable without feedback to the user.
+- If a tradeoff has to be made under time/credit pressure, say so
+  explicitly rather than quietly shipping the rougher version — this
+  matches the project's existing pattern of flagging simplifications
+  (e.g. the `home_school`/`away_school` text-bridge columns) instead of
+  hiding them.
+
 ## House rules for this project (don't re-litigate without a reason)
 
 - Open-source stack, zero ArcGIS licensing — see `docs/TECH_STACK.md`.
