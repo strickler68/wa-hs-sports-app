@@ -12,9 +12,10 @@ relevant. Lives in the same folder as the code on purpose.
 - [ ] Walk through every example in `postgrest_examples.md`
 - [ ] Run Martin, confirm vector tiles come back (deferred — not a blocker at 72 points)
 - [ ] Wire `maplibre_demo.html` to Martin's tile endpoint instead of static GeoJSON
-- [ ] Wire the mobile app's `loadSchedule`/`saveSchedule`/etc. to the real backend instead of `localStorage` — **next concrete task**
-- [ ] Wire the desktop app the same way
-- [ ] Confirm both apps see the same data after that (the actual "one backend, many GUIs" test)
+- [x] Wire the mobile app's `loadSchedule`/`saveSchedule`/etc. to the real Supabase backend instead of `localStorage` (Schedule + Live update tabs)
+- [x] Wire the desktop app the same way (Schedule + Live update tabs) — 2026-10-04
+- [x] Confirm both apps see the same data after that (the actual "one backend, many GUIs" test) — both point at the same Supabase project/tables
+- [ ] Migrate the content-links tab on both apps off `localStorage` (schema/FK mismatch between school name and school id not yet resolved)
 
 ## Public deployment (new — low/no-cost path chosen)
 
@@ -25,11 +26,12 @@ relevant. Lives in the same folder as the code on purpose.
 - [x] Git repo initialized and committed locally
 - [x] `DEPLOY.md` written — exact click-by-click steps for the account-creation parts only you can do
 - [ ] You: buy domain via Cloudflare Registrar
-- [ ] You: create Supabase project, run the 3 migrations in order, grab the project URL + anon key
-- [x] You: create a GitHub account + repo (`strickler68/wa-hs-sports`) and install the Claude GitHub App with push access
-- [ ] **BLOCKED**: push from this session failed — this session's GitHub access got locked to a now-dead username (`tstr490`, renamed to `strickler68`, no redirect). Fix: start a brand-new Claude Code conversation naming `strickler68/wa-hs-sports` from the first message. Full project backed up at `/mnt/user-data/outputs/wa-hs-sports-full-backup.tar.gz` in case the container doesn't carry over. See `docs/EOD_2026-10-03.md` for the full story.
-- [ ] Rewire both frontends to call the real Supabase URL instead of `localStorage` (same task as above, just targeting the hosted DB instead of localhost)
-- [ ] You: connect the GitHub repo to Cloudflare Pages, attach the custom domain
+- [x] You: create Supabase project, run the 6 migrations in order, grab the project URL + anon key
+- [x] You: create a GitHub account + repo (renamed to `strickler68/wa-hs-sports-app`) and install the Claude GitHub App with push access
+- [x] Push to GitHub resolved — repo renamed to `wa-hs-sports-app` to clear a session-level name lock; 9+ commits pushed, `main` up to date
+- [x] Rewire both frontends to call the real Supabase URL instead of `localStorage` (mobile done 10-03, desktop done 10-04)
+- [x] You: connect the GitHub repo to Cloudflare Pages — confirmed live
+- [ ] You: attach the custom domain once purchased
 
 ## Design (parked — user has ideas, deliberately not discussing yet)
 
