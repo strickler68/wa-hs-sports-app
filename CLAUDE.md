@@ -33,7 +33,11 @@ project state from memory.
    need the fuller project history/architecture reasoning — these are
    stable background, not where day-to-day status lives.
 4. **`DEPLOY.md`** only if the task involves hosting/deployment.
-5. **`docs/WORKFLOW.md`** whenever the task involves picking what to work
+5. **`docs/BACKEND_GUIDE.md`** whenever the task touches Supabase, RLS,
+   the schema, or anything the user would need to maintain solo —
+   written specifically so the user isn't dependent on an AI session to
+   keep this running.
+6. **`docs/WORKFLOW.md`** whenever the task involves picking what to work
    on next, adding a new feature idea, or anything backlog/sprint/issue
    related — GitHub Issues + a Project board is the real backlog now,
    not a flat checklist. `ROADMAP.md` stays for high-level status/history
